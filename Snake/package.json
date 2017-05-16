@@ -15,5 +15,8 @@
     "bugs": {
         "url": "https://github.com/RossyB/GameSnake/issues"
     },
-    "homepage": "https://github.com/RossyB/GameSnake#readme"
+    "homepage": "https://github.com/RossyB/GameSnake#readme",
+    "dependencies": {
+        "phaser": "^2.6.2"
+    }
 }
