@@ -19,8 +19,12 @@ var GameModels;
             _this.numSnakeSection = 10;
             _this.snakeSpacer = 6;
             _this.group = _this.game.add.group();
+            _this.snakeHead = _this.game.add.sprite(x, y, "snakeBody");
+            _this.snakeHead.anchor.setTo(0.5, 0.5);
+            _this.game.physics.arcade.enable(_this.snakeHead);
+            _this.group.add(_this.snakeHead);
             for (var index = 0; index < _this.numSnakeSection; index++) {
-                _this.snakeBody[index] = _this.game.add.sprite(x + index * 20, y, "snakeBody");
+                _this.snakeBody[index] = _this.game.add.sprite(x + index * 20 + 20, y, "snakeBody");
                 _this.snakeBody[index].anchor.setTo(0.5, 0.5);
                 _this.game.physics.arcade.enable(_this.snakeBody[index]);
             }
