@@ -59,7 +59,7 @@ module GameStates{
             let snakeVelocity = 120;
 
             this.game.physics.arcade.collide(this.snake.snakeHead, this.apple, this.appleCollision, null, this);
-            this.game.physics.arcade.collide(this.snake.snakeHead, this.snake.snakeBody, this.selfCollision, null, this)
+            //this.game.physics.arcade.collide(this.snake.snakeHead, this.snake.snakeBody, this.selfCollision, null, this)
 
             if (this.cursors.right.isDown && this.direction!='left'){
                 this.newDirection = 'right';
@@ -87,7 +87,7 @@ module GameStates{
                     this.newDirection = null;
                 }
             }
-            
+
             if(this.direction === 'right'){
                 this.snake.snakeHead.body.velocity.x += snakeVelocity;
                 let part = this.snake.snakePath.pop();
@@ -133,7 +133,7 @@ module GameStates{
                     this.snake.snakeBody[i].y = (this.snake.snakePath[i * this.snake.snakeSpacer]).y;
                 }
             }
-
+            this.selfCollision(this.snake.snakeHead, this.snake.snakeBody);
             this.wallCollision(this.snake.snakeHead);
         }
 
@@ -174,7 +174,7 @@ module GameStates{
         }
 
         selfCollision(snakeHead, snakeGroup){
-            for(var i = 0; i < snakeGroup.length - 1; i++){
+            for(var i = 1; i < snakeGroup.length - 1; i++){
                 if(snakeHead.x === snakeGroup[i].x && snakeHead.y === snakeGroup[i].y){
 
                     this.music.stop();
@@ -186,7 +186,7 @@ module GameStates{
 
         wallCollision(snakeHead) {
 
-            if(snakeHead.x >= 800 || snakeHead.x < 0 || snakeHead.y >= 600 || snakeHead.y < 0){
+            if(snakeHead.x >= 800 - 10 || snakeHead.x < 0 + 10 || snakeHead.y >= 600 - 10 || snakeHead.y < 0 + 10){
 
                 this.music.stop();
                 this.gameOverSound.play(null, null, this.volume, false);

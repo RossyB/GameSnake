@@ -47,7 +47,7 @@ var GameStates;
             this.snake.snakeHead.body.angularVelocity = 0;
             var snakeVelocity = 120;
             this.game.physics.arcade.collide(this.snake.snakeHead, this.apple, this.appleCollision, null, this);
-            this.game.physics.arcade.collide(this.snake.snakeHead, this.snake.snakeBody, this.selfCollision, null, this);
+            //this.game.physics.arcade.collide(this.snake.snakeHead, this.snake.snakeBody, this.selfCollision, null, this)
             if (this.cursors.right.isDown && this.direction != 'left') {
                 this.newDirection = 'right';
             }
@@ -110,6 +110,7 @@ var GameStates;
                     this.snake.snakeBody[i].y = (this.snake.snakePath[i * this.snake.snakeSpacer]).y;
                 }
             }
+            this.selfCollision(this.snake.snakeHead, this.snake.snakeBody);
             this.wallCollision(this.snake.snakeHead);
         };
         gamePlay.prototype.renderGroup = function (member) {
@@ -138,7 +139,7 @@ var GameStates;
             this.speedTextValue.text = this.speed.toString();
         };
         gamePlay.prototype.selfCollision = function (snakeHead, snakeGroup) {
-            for (var i = 0; i < snakeGroup.length - 1; i++) {
+            for (var i = 1; i < snakeGroup.length - 1; i++) {
                 if (snakeHead.x === snakeGroup[i].x && snakeHead.y === snakeGroup[i].y) {
                     this.music.stop();
                     this.gameOverSound.play(null, null, this.volume, false);
@@ -147,7 +148,7 @@ var GameStates;
             }
         };
         gamePlay.prototype.wallCollision = function (snakeHead) {
-            if (snakeHead.x >= 800 || snakeHead.x < 0 || snakeHead.y >= 600 || snakeHead.y < 0) {
+            if (snakeHead.x >= 800 - 10 || snakeHead.x < 0 + 10 || snakeHead.y >= 600 - 10 || snakeHead.y < 0 + 10) {
                 this.music.stop();
                 this.gameOverSound.play(null, null, this.volume, false);
                 this.game.state.start('gameOver');

@@ -15,7 +15,7 @@ module GameModels {
             this.snakeBody = [];
             this.snakePath = [];
             this.numSnakeSection = 5;
-            this.snakeSpacer = 6;
+            this.snakeSpacer = 8;
             this.group = this.game.add.group();
 
             this.snakeHead = this.game.add.sprite(x, y, "snakeBody");

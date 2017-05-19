@@ -17,7 +17,7 @@ var GameModels;
             _this.snakeBody = [];
             _this.snakePath = [];
             _this.numSnakeSection = 5;
-            _this.snakeSpacer = 6;
+            _this.snakeSpacer = 8;
             _this.group = _this.game.add.group();
             _this.snakeHead = _this.game.add.sprite(x, y, "snakeBody");
             _this.snakeHead.anchor.setTo(0.5, 0.5);
