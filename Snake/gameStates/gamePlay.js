@@ -140,7 +140,7 @@ var GameStates;
         };
         gamePlay.prototype.selfCollision = function (snakeHead, snakeGroup) {
             for (var i = 1; i < snakeGroup.length - 1; i++) {
-                if (snakeHead.x === snakeGroup[i].x && snakeHead.y === snakeGroup[i].y) {
+                if (snakeHead.x == snakeGroup[i].x && snakeHead.y == snakeGroup[i].y) {
                     this.music.stop();
                     this.gameOverSound.play(null, null, this.volume, false);
                     this.game.state.start('gameOver');

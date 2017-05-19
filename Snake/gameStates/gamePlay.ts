@@ -1,4 +1,3 @@
-
 module GameStates{
     export class gamePlay extends Phaser.State{
         game: Phaser.Game;
@@ -175,7 +174,7 @@ module GameStates{
 
         selfCollision(snakeHead, snakeGroup){
             for(var i = 1; i < snakeGroup.length - 1; i++){
-                if(snakeHead.x === snakeGroup[i].x && snakeHead.y === snakeGroup[i].y){
+                if(snakeHead.x == snakeGroup[i].x && snakeHead.y == snakeGroup[i].y){
 
                     this.music.stop();
                     this.gameOverSound.play(null, null, this.volume, false);
@@ -192,7 +191,6 @@ module GameStates{
                 this.gameOverSound.play(null, null, this.volume, false);
                 this.game.state.start('gameOver');
             }
-
         }
     }
 }
