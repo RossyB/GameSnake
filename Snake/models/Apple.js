@@ -18,6 +18,9 @@ var GameModels;
             _this.apple.anchor.setTo(0.5, 0.5);
             return _this;
         }
+        Apple.prototype.destroyApple = function () {
+            this.apple.destroy();
+        };
         return Apple;
     }(Phaser.Sprite));
     GameModels.Apple = Apple;

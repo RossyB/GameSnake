@@ -16,7 +16,7 @@ var GameModels;
             var _this = _super.call(this, game, x, y) || this;
             _this.snakeBody = [];
             _this.snakePath = [];
-            _this.numSnakeSection = 10;
+            _this.numSnakeSection = 5;
             _this.snakeSpacer = 6;
             _this.group = _this.game.add.group();
             _this.snakeHead = _this.game.add.sprite(x, y, "snakeBody");
@@ -24,15 +24,27 @@ var GameModels;
             _this.game.physics.arcade.enable(_this.snakeHead);
             _this.group.add(_this.snakeHead);
             for (var index = 0; index < _this.numSnakeSection; index++) {
-                _this.snakeBody[index] = _this.game.add.sprite(x + index * 20 + 20, y, "snakeBody");
+                _this.snakeBody[index] = _this.game.add.sprite(x - index * 3, y, "snakeBody");
                 _this.snakeBody[index].anchor.setTo(0.5, 0.5);
                 _this.game.physics.arcade.enable(_this.snakeBody[index]);
             }
-            for (var i = 0; i < _this.numSnakeSection * _this.snakeSpacer; i++) {
-                _this.snakePath[i] = new Phaser.Point(400, 300);
+            for (var index = 0; index < _this.numSnakeSection * _this.snakeSpacer; index++) {
+                _this.snakePath[index] = new Phaser.Point(400 - index * 3, 300);
             }
             return _this;
         }
+        Snake.prototype.addBody = function (game, x, y) {
+            this.snakeBody.push(this.game.add.sprite(x, y, "snakeBody"));
+            this.numSnakeSection++;
+            this.lastX = this.snakeBody[this.numSnakeSection - 1].x;
+            this.lastY = this.snakeBody[this.numSnakeSection - 1].y;
+            this.snakeBody[this.numSnakeSection - 1].anchor.setTo(0.5, 0.5);
+            this.game.physics.arcade.enable(this.snakeBody[this.numSnakeSection - 1]);
+            this.group.add(this.snakeBody[this.numSnakeSection - 1]);
+            for (var index = 0; index < this.snakeSpacer; index++) {
+                this.snakePath.push(new Phaser.Point(this.lastX + index, this.lastY));
+            }
+        };
         return Snake;
     }(Phaser.Sprite));
     GameModels.Snake = Snake;

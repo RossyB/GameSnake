@@ -13,7 +13,9 @@ var GameStates;
     var gamePlay = (function (_super) {
         __extends(gamePlay, _super);
         function gamePlay() {
-            return _super.call(this) || this;
+            var _this = _super.call(this) || this;
+            _this.volume = 1;
+            return _this;
         }
         gamePlay.prototype.create = function () {
             this.updateDelay = 0;
@@ -27,6 +29,10 @@ var GameStates;
             this.speed = 0;
             var textStyleKey = { font: "bold 14px sans-serif", fill: "#134f01", align: "center" };
             var textStyleValue = { font: "bold 18px sans-serif", fill: "#fff", align: "center" };
+            this.eatAppleSound = this.game.sound.add("sound-eat-apple", this.volume, true);
+            this.gameOverSound = this.game.sound.add("sound-game-over", this.volume, true);
+            this.music = this.game.sound.add("sound-game-play", this.volume, true);
+            this.music.play();
             // Score.
             this.game.add.text(30, 20, "SCORE", textStyleKey);
             this.scoreTextValue = this.game.add.text(90, 18, this.score.toString(), textStyleValue);
@@ -39,7 +45,9 @@ var GameStates;
         gamePlay.prototype.update = function () {
             this.snake.snakeHead.body.velocity.setTo(0, 0);
             this.snake.snakeHead.body.angularVelocity = 0;
-            var snakeVelocity = 150;
+            var snakeVelocity = 120;
+            this.game.physics.arcade.collide(this.snake.snakeHead, this.apple, this.appleCollision, null, this);
+            this.game.physics.arcade.collide(this.snake.snakeHead, this.snake.snakeBody, this.selfCollision, null, this);
             if (this.cursors.right.isDown && this.direction != 'left') {
                 this.newDirection = 'right';
             }
@@ -52,15 +60,9 @@ var GameStates;
             else if (this.cursors.down.isDown && this.direction != 'up') {
                 this.newDirection = 'down';
             }
-            // A formula to calculate game speed based on the score.
             this.speed = Math.min(10, Math.floor(this.score / 5));
-            // Update speed value on game screen.
-            this.speedTextValue.text = '' + this.speed;
-            // Increase a counter on every update call.
+            this.speedTextValue.text = this.speed.toString();
             this.updateDelay++;
-            // Do game stuff only if the counter is aliquot to (10 - the game speed).
-            // The higher the speed, the more frequently this is fulfilled,
-            // making the snake move faster.
             if (this.updateDelay % (10 - this.speed) == 0) {
                 // If a new direction has been chosen from the keyboard, make it the direction of the snake now.
                 if (this.newDirection) {
@@ -68,18 +70,7 @@ var GameStates;
                     this.newDirection = null;
                 }
             }
-            if (this.direction === 'left') {
-                this.snake.snakeHead.body.velocity.x -= snakeVelocity;
-                var part = this.snake.snakePath.pop();
-                part.setTo(this.snake.snakeHead.x, this.snake.snakeHead.y);
-                this.snake.snakePath.unshift(part);
-                for (var i = 0; i < this.snake.snakeBody.length; i++) {
-                    this.snake.snakeBody[i].x = (this.snake.snakePath[i * this.snake.snakeSpacer]).x;
-                    this.snake.snakeBody[i].y = (this.snake.snakePath[i * this.snake.snakeSpacer]).y;
-                    this.snake.snakeBody[i].frame = 3;
-                }
-            }
-            else if (this.direction === 'right') {
+            if (this.direction === 'right') {
                 this.snake.snakeHead.body.velocity.x += snakeVelocity;
                 var part = this.snake.snakePath.pop();
                 part.setTo(this.snake.snakeHead.x, this.snake.snakeHead.y);
@@ -87,7 +78,16 @@ var GameStates;
                 for (var i = 0; i < this.snake.snakeBody.length; i++) {
                     this.snake.snakeBody[i].x = (this.snake.snakePath[i * this.snake.snakeSpacer]).x;
                     this.snake.snakeBody[i].y = (this.snake.snakePath[i * this.snake.snakeSpacer]).y;
-                    this.snake.snakeBody[i].frame = 3;
+                }
+            }
+            else if (this.direction === 'left') {
+                this.snake.snakeHead.body.velocity.x -= snakeVelocity;
+                var part = this.snake.snakePath.pop();
+                part.setTo(this.snake.snakeHead.x, this.snake.snakeHead.y);
+                this.snake.snakePath.unshift(part);
+                for (var i = 0; i < this.snake.snakeBody.length; i++) {
+                    this.snake.snakeBody[i].x = (this.snake.snakePath[i * this.snake.snakeSpacer]).x;
+                    this.snake.snakeBody[i].y = (this.snake.snakePath[i * this.snake.snakeSpacer]).y;
                 }
             }
             else if (this.direction === 'up') {
@@ -98,7 +98,6 @@ var GameStates;
                 for (var i = 0; i < this.snake.snakeBody.length; i++) {
                     this.snake.snakeBody[i].x = (this.snake.snakePath[i * this.snake.snakeSpacer]).x;
                     this.snake.snakeBody[i].y = (this.snake.snakePath[i * this.snake.snakeSpacer]).y;
-                    this.snake.snakeBody[i].frame = 3;
                 }
             }
             else if (this.direction == 'down') {
@@ -109,15 +108,50 @@ var GameStates;
                 for (var i = 0; i < this.snake.snakeBody.length; i++) {
                     this.snake.snakeBody[i].x = (this.snake.snakePath[i * this.snake.snakeSpacer]).x;
                     this.snake.snakeBody[i].y = (this.snake.snakePath[i * this.snake.snakeSpacer]).y;
-                    this.snake.snakeBody[i].frame = 3;
                 }
             }
+            this.wallCollision(this.snake.snakeHead);
+        };
+        gamePlay.prototype.renderGroup = function (member) {
+            this.game.debug.body(member);
         };
         gamePlay.prototype.generateApple = function () {
             // Chose a random place on the grid.
             var randomX = Math.floor(Math.random() * 39) * 15 + 15, randomY = Math.floor(Math.random() * 29) * 15 + 15;
             // Add a new apple.
             this.apple = new GameModels.Apple(this.game, randomX, randomY);
+            this.apple.anchor.setTo(0.5, 0.5);
+            this.game.physics.arcade.enable(this.apple);
+        };
+        gamePlay.prototype.appleCollision = function (snakeHead, apple) {
+            // Destroy the old apple.
+            apple.destroyApple();
+            this.eatAppleSound.play(null, null, this.volume, false);
+            // Make a new one.
+            this.generateApple();
+            this.snake.addBody(this.game, this.snake.lastX, this.snake.lastY);
+            // Increase score.
+            this.score++;
+            this.speed++;
+            // Refresh scoreboard.
+            this.scoreTextValue.text = this.score.toString();
+            this.speedTextValue.text = this.speed.toString();
+        };
+        gamePlay.prototype.selfCollision = function (snakeHead, snakeGroup) {
+            for (var i = 0; i < snakeGroup.length - 1; i++) {
+                if (snakeHead.x === snakeGroup[i].x && snakeHead.y === snakeGroup[i].y) {
+                    this.music.stop();
+                    this.gameOverSound.play(null, null, this.volume, false);
+                    this.game.state.start('gameOver');
+                }
+            }
+        };
+        gamePlay.prototype.wallCollision = function (snakeHead) {
+            if (snakeHead.x >= 800 || snakeHead.x < 0 || snakeHead.y >= 600 || snakeHead.y < 0) {
+                this.music.stop();
+                this.gameOverSound.play(null, null, this.volume, false);
+                this.game.state.start('gameOver');
+            }
         };
         return gamePlay;
     }(Phaser.State));

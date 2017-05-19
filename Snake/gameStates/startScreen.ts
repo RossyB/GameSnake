@@ -3,6 +3,8 @@ module GameStates {
         game: Phaser.Game;
         group: Phaser.Group;
         startScreenImage: Phaser.Sprite;
+        music: Phaser.Sound;
+        volume: number = 1;
 
         constructor() {
             super();
@@ -17,10 +19,14 @@ module GameStates {
 
             this.group.add(newGameButton);
             this.group.add(quitButton);
+
+            this.music = this.game.sound.add("sound-start-screen", this.volume, true);
+            this.music.play();
         }
 
         startGame() {
             this.game.state.start("gamePlay");
+            this.music.stop();
         }
 
         onClick(){    

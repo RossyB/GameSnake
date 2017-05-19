@@ -13,7 +13,9 @@ var GameStates;
     var startScreen = (function (_super) {
         __extends(startScreen, _super);
         function startScreen() {
-            return _super.call(this) || this;
+            var _this = _super.call(this) || this;
+            _this.volume = 1;
+            return _this;
         }
         startScreen.prototype.create = function () {
             this.startScreenImage = this.add.sprite(0, 0, "start-screen");
@@ -22,9 +24,12 @@ var GameStates;
             var quitButton = this.game.make.button(50, 350, "quit-button", this.onClick, this, 0, 1);
             this.group.add(newGameButton);
             this.group.add(quitButton);
+            this.music = this.game.sound.add("sound-start-screen", this.volume, true);
+            this.music.play();
         };
         startScreen.prototype.startGame = function () {
             this.game.state.start("gamePlay");
+            this.music.stop();
         };
         startScreen.prototype.onClick = function () {
             window.close();
